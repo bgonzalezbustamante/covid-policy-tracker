@@ -1,7 +1,7 @@
 name: Data link to OxCGRT
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/60 * * * *'
 
 jobs:
   build:
@@ -11,7 +11,10 @@ jobs:
         with:
           fetch-depth: 1
       - name: Download raw csv from OxCGRT database
-        run: curl -s 'https://ocgptweb.azurewebsites.net/CSVDownload?type=Compressed' > data/OxCGRT_latest.csv
+        run: |
+          curl -s 'https://oxcgrtportal.azurewebsites.net/api/CSVDownload?type=Compressed' > data/OxCGRT_latest.csv
+          curl -s 'https://oxcgrtportal.azurewebsites.net/api/CSVDownload' > data/OxCGRT_latest_withnotes.csv
+          curl -s 'https://oxcgrtportal.azurewebsites.net/api/CSVDownload?type=changes_all' > data/OxCGRT_latest_allchanges.csv
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
